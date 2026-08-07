@@ -3,6 +3,61 @@
 <!-- Published Aug 2, 2026, 6:34 PM UTC -->
 <html dir="ltr">
 <head>
+<script id="inyo-base-path">
+(function () {
+  // Project Pages live under /inyorebuilt; local exact/site servers use "/".
+  var BASE = location.pathname.indexOf("/inyorebuilt") === 0 ? "/inyorebuilt" : "";
+  function withBase(path) {
+    if (typeof path !== "string" || !path) return path;
+    if (/^(https?:|mailto:|tel:|#|\/\/)/i.test(path)) return path;
+    try {
+      var u = new URL(path, location.origin);
+      if (u.origin !== location.origin) return path;
+      var p = u.pathname;
+      if (!BASE) return path;
+      if (p === BASE || p.indexOf(BASE + "/") === 0) return p + u.search + u.hash;
+      if (p === "/" || p.indexOf("/legal/") === 0 || p === "/legal") {
+        return BASE + (p === "/" ? "/" : p) + u.search + u.hash;
+      }
+      return path;
+    } catch (e) {
+      return path;
+    }
+  }
+  if (BASE && (location.pathname.indexOf("/legal/") === 0 || location.pathname === "/legal")) {
+    location.replace(BASE + location.pathname + location.search + location.hash);
+    return;
+  }
+  var push = history.pushState.bind(history);
+  var replace = history.replaceState.bind(history);
+  history.pushState = function (state, title, url) {
+    return push(state, title, url == null ? url : withBase(String(url)));
+  };
+  history.replaceState = function (state, title, url) {
+    return replace(state, title, url == null ? url : withBase(String(url)));
+  };
+  document.addEventListener(
+    "click",
+    function (e) {
+      if (e.defaultPrevented) return;
+      if (e.button !== 0) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target && e.target.closest ? e.target.closest("a") : null;
+      if (!a) return;
+      var raw = a.getAttribute("href");
+      if (!raw) return;
+      var fixed = withBase(raw);
+      if (fixed === raw) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      a.setAttribute("href", fixed);
+      location.assign(fixed);
+    },
+    true
+  );
+})();
+</script>
+
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="generator" content="Framer 089ff9b">
@@ -30,7 +85,7 @@
   function fixLogo() {
     document.querySelectorAll('a[data-framer-name="Logo"]').forEach(function (a) {
       var root = siteRoot();
-      if (a.getAttribute('href') !== root) a.setAttribute('href', root);
+      a.setAttribute('href', root);
     });
   }
   function fix() {
@@ -49,7 +104,7 @@
   var n = 0;
   var id = setInterval(function () {
     fix();
-    if (++n > 50) clearInterval(id);
+    if (++n > 200) clearInterval(id);
   }, 100);
 })();
 </script>
