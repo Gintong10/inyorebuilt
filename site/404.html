@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Inyo</title>
+  <script>
+(function () {
+  var base = "/inyorebuilt/";
+  var path = location.pathname;
+  // Keep real missing assets as 404; only bounce HTML navigations into the app.
+  if (path.indexOf(base) === 0) {
+    location.replace(base);
+  } else {
+    location.replace("/");
+  }
+})();
+  </script>
+</head>
+<body>
+  <p><a href="/inyorebuilt/">Back to Inyo</a></p>
+</body>
+</html>
