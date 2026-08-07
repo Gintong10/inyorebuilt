@@ -36,6 +36,47 @@
   history.replaceState = function (state, title, url) {
     return replace(state, title, url == null ? url : withBase(String(url)));
   };
+
+  // Keep Framer from leaving "{{Title}} — inyo" in the tab.
+  var LEGAL_TITLES = {
+    "privacy-policy": "Privacy Policy — inyo",
+    "terms-conditions": "Terms & Conditions — inyo"
+  };
+  function legalTitle() {
+    var parts = location.pathname.replace(/\/+$/, "").split("/");
+    var slug = parts[parts.length - 1];
+    return LEGAL_TITLES[slug] || null;
+  }
+  function forceTitle() {
+    var t = legalTitle();
+    if (!t) return;
+    if (document.title !== t) document.title = t;
+  }
+  forceTitle();
+  try {
+    var desc = Object.getOwnPropertyDescriptor(Document.prototype, "title") ||
+               Object.getOwnPropertyDescriptor(HTMLDocument.prototype, "title");
+    if (desc && desc.set && desc.get) {
+      Object.defineProperty(document, "title", {
+        configurable: true,
+        enumerable: true,
+        get: function () { return desc.get.call(this); },
+        set: function (v) {
+          var t = legalTitle();
+          desc.set.call(this, t || v);
+        }
+      });
+    }
+  } catch (e) {}
+  setInterval(forceTitle, 250);
+  function forceLogo() {
+    var root = BASE ? BASE + "/" : "/";
+    document.querySelectorAll('a[data-framer-name="Logo"]').forEach(function (a) {
+      a.setAttribute("href", root);
+    });
+  }
+  setInterval(forceLogo, 250);
+
   document.addEventListener(
     "click",
     function (e) {
