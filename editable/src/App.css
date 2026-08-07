@@ -29,11 +29,13 @@
   gap: 4px;
   color: var(--ink-soft);
   text-decoration: none;
-  transition: opacity 0.28s ease;
+  transition: opacity 0.35s ease;
 }
 
 .brand-mark.is-faded {
-  opacity: 0.14;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease-out;
 }
 
 .brand-mark svg {
@@ -345,7 +347,15 @@
   transform: translateY(-10px) scale(1.05);
 }
 
+.logic-pin {
+  height: 180vh;
+  position: relative;
+}
+
 .logic {
+  position: sticky;
+  top: 0;
+  height: 100vh;
   min-height: 100vh;
   display: grid;
   place-items: end center;

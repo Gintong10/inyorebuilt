@@ -143,51 +143,165 @@
 
 
 <style id="inyo-logo-fade">
-  /* Centered logo; fades when it sits over page content */
+  /* Full opacity while transitioning between slides; fade out when a slide is locked */
   [data-framer-name="Fixed Logo"] [data-framer-name="Logo"],
   .framer-vop471 > a {
-    transition: opacity 0.28s ease !important;
+    transition: opacity 0.35s ease !important;
   }
-  [data-framer-name="Fixed Logo"].inyo-logo-over-content [data-framer-name="Logo"],
-  .framer-vop471.inyo-logo-over-content > a {
-    opacity: 0.14 !important;
+  [data-framer-name="Fixed Logo"].inyo-logo-slide-locked [data-framer-name="Logo"],
+  .framer-vop471.inyo-logo-slide-locked > a {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.35s ease-out !important;
+  }
+</style>
+<style id="inyo-web-logic-pin">
+  /*
+   * Sticky lock only — keep Framer's original gradient + video mask so this
+   * still blends into the slide above (#f1efea junction). Overriding those is
+   * what created the hard edge after we pinned it.
+   */
+  .inyo-web-logic-pin {
+    width: 100%;
+    height: 180vh;
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    place-content: flex-start center;
+    align-items: stretch;
+    overflow: visible;
+    /* Match Real Conversations → Web Logic handoff color */
+    background: #f1efea;
+  }
+  .inyo-web-logic-pin > [data-framer-name="Web Logic"],
+  .inyo-web-logic-pin > .framer-37tqo7 {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 3 !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    width: 100% !important;
+    flex: none !important;
+  }
+  body.inyo-web-logic-locked [data-framer-name="Fixed Nav"],
+  body.inyo-web-logic-locked .framer-oeqx2 {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.25s ease !important;
+  }
+  [data-framer-name="Fixed Nav"],
+  .framer-oeqx2 {
+    transition: opacity 0.25s ease !important;
   }
 </style>
 
 <script>
 (function () {
-  function overlaps(a, b) {
-    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+  function pinWebLogic() {
+    var section = document.querySelector('[data-framer-name="Web Logic"], .framer-37tqo7');
+    if (!section) return;
+    if (section.parentElement && section.parentElement.classList.contains("inyo-web-logic-pin")) return;
+    var pin = document.createElement("div");
+    pin.className = "inyo-web-logic-pin";
+    pin.setAttribute("data-framer-name", "Web Logic Pin");
+    section.parentNode.insertBefore(pin, section);
+    pin.appendChild(section);
   }
-  function updateLogoFade() {
-    var logo = document.querySelector('[data-framer-name="Fixed Logo"], .framer-vop471');
-    if (!logo) return;
-    var mark = logo.querySelector('[data-framer-name="Logo"], a') || logo;
-    var lr = mark.getBoundingClientRect();
-    var hit = {
-      left: lr.left - 8,
-      right: lr.right + 8,
-      top: lr.top - 4,
-      bottom: lr.bottom + 28
-    };
-    var nodes = document.querySelectorAll(
-      'h1, h2, h3, p, [data-framer-name="Headline"], [data-framer-name="Eyebrow"], [data-framer-component-type="RichTextContainer"]'
-    );
-    var covering = false;
-    for (var i = 0; i < nodes.length; i++) {
-      var el = nodes[i];
-      if (logo.contains(el)) continue;
-      var r = el.getBoundingClientRect();
-      if (r.width < 2 || r.height < 2) continue;
-      if (r.bottom < 0 || r.top > window.innerHeight) continue;
-      if (overlaps(hit, r)) {
-        covering = true;
-        break;
-      }
+
+  function syncWebLogicNav() {
+    var section = document.querySelector('[data-framer-name="Web Logic"], .framer-37tqo7');
+    if (!section) {
+      document.body.classList.remove("inyo-web-logic-locked");
+      return;
     }
-    logo.classList.toggle("inyo-logo-over-content", covering);
+    var vh = window.innerHeight || 1;
+    var r = section.getBoundingClientRect();
+    var locked = Math.abs(r.top) <= 48 && r.bottom >= vh * 0.85 && r.height >= vh * 0.75;
+    document.body.classList.toggle("inyo-web-logic-locked", locked);
   }
+
+  var navTicking = false;
+  function onNavScroll() {
+    if (navTicking) return;
+    navTicking = true;
+    requestAnimationFrame(function () {
+      navTicking = false;
+      syncWebLogicNav();
+    });
+  }
+
+  pinWebLogic();
+  syncWebLogicNav();
+  new MutationObserver(pinWebLogic).observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+  window.addEventListener("scroll", onNavScroll, { passive: true });
+  window.addEventListener("resize", onNavScroll);
+  [50, 200, 500, 1000].forEach(function (t) {
+    setTimeout(function () {
+      pinWebLogic();
+      syncWebLogicNav();
+    }, t);
+  });
+})();
+</script>
+<script>
+(function () {
+  var LOCK_TOP = 48;
   var ticking = false;
+
+  function getLogo() {
+    return document.querySelector('[data-framer-name="Fixed Logo"], .framer-vop471');
+  }
+
+  function isStickyLocked(el, vh) {
+    var r = el.getBoundingClientRect();
+    if (r.height < vh * 0.75) return false;
+    return Math.abs(r.top) <= LOCK_TOP && r.bottom >= vh * 0.85;
+  }
+
+  function isViewportSlideLocked(el, vh) {
+    var r = el.getBoundingClientRect();
+    if (r.height < vh * 0.75) {
+      var cover = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0)) / vh;
+      return cover >= 0.55 && r.top <= LOCK_TOP;
+    }
+    return Math.abs(r.top) <= LOCK_TOP && r.bottom >= vh * 0.8;
+  }
+
+  function isHomeSlide() {
+    var hero = document.querySelector('[data-framer-name="Hero"]');
+    if (!hero) return window.scrollY < 8;
+    var r = hero.getBoundingClientRect();
+    var vh = window.innerHeight || 1;
+    // Keep the logo visible on the greeting / title slide
+    return r.top > -vh * 0.35 && r.bottom > vh * 0.55;
+  }
+
+  function isSlideLocked() {
+    if (isHomeSlide()) return false;
+    var vh = window.innerHeight || 1;
+    var stickies = document.querySelectorAll(
+      '[data-framer-name="Problem"], [data-framer-name="Pinned Stage"], [data-framer-name="Web Logic"]'
+    );
+    for (var i = 0; i < stickies.length; i++) {
+      if (isStickyLocked(stickies[i], vh)) return true;
+    }
+    var slides = document.querySelectorAll('[data-framer-name="Our Mission"]');
+    for (var j = 0; j < slides.length; j++) {
+      if (isViewportSlideLocked(slides[j], vh)) return true;
+    }
+    return false;
+  }
+
+  function updateLogoFade() {
+    var logo = getLogo();
+    if (!logo) return;
+    logo.classList.toggle("inyo-logo-slide-locked", isSlideLocked());
+    logo.classList.remove("inyo-logo-settled", "inyo-logo-over-content");
+  }
+
   function onScroll() {
     if (ticking) return;
     ticking = true;
@@ -196,6 +310,7 @@
       updateLogoFade();
     });
   }
+
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll);
   [100, 400, 900, 1600].forEach(function (t) { setTimeout(updateLogoFade, t); });

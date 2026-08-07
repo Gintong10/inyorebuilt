@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 const avatar = "/assets/images/inyo-avatar.png";
@@ -12,41 +12,39 @@ const hena = "/assets/images/w41tk1wu8uoDpPSOPETnUdmzE.png";
 const portrait = "/assets/images/GzY3hNyAkoepVB4uMJztgcusIg.png";
 const logicVideo = "/assets/videos/re1Gtl1I6pTkJrlq1LGJGdIY.mp4";
 
-function overlaps(a, b) {
-  return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
-}
-
 function BrandMark() {
-  const ref = useRef(null);
   const [faded, setFaded] = useState(false);
 
   useEffect(() => {
-    const update = () => {
-      const mark = ref.current;
-      if (!mark) return;
-      const lr = mark.getBoundingClientRect();
-      const hit = {
-        left: lr.left - 8,
-        right: lr.right + 8,
-        top: lr.top - 4,
-        bottom: lr.bottom + 8,
-      };
-      const nodes = document.querySelectorAll("h1, h2, h3, p, .eyebrow");
-      let covering = false;
-      for (const el of nodes) {
-        if (mark.contains(el)) continue;
-        const r = el.getBoundingClientRect();
-        if (r.width < 2 || r.height < 2) continue;
-        if (r.bottom < 0 || r.top > window.innerHeight) continue;
-        if (overlaps(hit, r)) {
-          covering = true;
-          break;
-        }
-      }
-      setFaded(covering);
+    const LOCK_TOP = 48;
+    let ticking = false;
+
+    const isHomeSlide = () => {
+      const hero = document.querySelector("header.hero");
+      if (!hero) return window.scrollY < 8;
+      const r = hero.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+      return r.top > -vh * 0.35 && r.bottom > vh * 0.55;
     };
 
-    let ticking = false;
+    const isSlideLocked = () => {
+      if (isHomeSlide()) return false;
+      const vh = window.innerHeight || 1;
+      const slides = document.querySelectorAll("section.section");
+      for (const el of slides) {
+        const r = el.getBoundingClientRect();
+        if (r.height < vh * 0.75) {
+          const cover =
+            Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0)) / vh;
+          if (cover >= 0.55 && r.top <= LOCK_TOP) return true;
+          continue;
+        }
+        if (Math.abs(r.top) <= LOCK_TOP && r.bottom >= vh * 0.8) return true;
+      }
+      return false;
+    };
+
+    const update = () => setFaded(isSlideLocked());
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
@@ -67,7 +65,6 @@ function BrandMark() {
 
   return (
     <a
-      ref={ref}
       className={`brand-mark${faded ? " is-faded" : ""}`}
       href="#top"
       aria-label="Inyo"
@@ -240,18 +237,20 @@ export default function App() {
         </div>
       </section>
 
-      <section className="section logic" id="story">
-        <video className="logic-media" autoPlay muted loop playsInline poster={storyWide}>
-          <source src={logicVideo} type="video/mp4" />
-        </video>
-        <div className="section-inner">
-          <h2>A simple chat, over a complex web of logic.</h2>
-          <p className="lead">
-            Inyo runs multiple scoring models in parallel and adds guardrails to
-            help you find the right match.
-          </p>
-        </div>
-      </section>
+      <div className="logic-pin">
+        <section className="section logic" id="story">
+          <video className="logic-media" autoPlay muted loop playsInline poster={storyWide}>
+            <source src={logicVideo} type="video/mp4" />
+          </video>
+          <div className="section-inner">
+            <h2>A simple chat, over a complex web of logic.</h2>
+            <p className="lead">
+              Inyo runs multiple scoring models in parallel and adds guardrails to
+              help you find the right match.
+            </p>
+          </div>
+        </section>
+      </div>
 
       <section className="section">
         <div className="section-inner split">
