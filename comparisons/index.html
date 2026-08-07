@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inyo — before / after edits</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --ink: #1c1b19;
+        --muted: #6b6760;
+        --line: #ddd6c8;
+        --panel: #fffdf8;
+        --accent: #c9b458;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.45;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 48px 24px 96px;
+      }
+      header h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        margin: 0 0 8px;
+      }
+      header p {
+        margin: 0;
+        color: var(--muted);
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 15px;
+      }
+      .meta {
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .meta span strong { color: var(--ink); font-weight: 600; }
+      .toc {
+        margin: 40px 0 8px;
+        padding: 20px 22px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+      }
+      .toc h2 {
+        margin: 0 0 12px;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      .toc ol {
+        margin: 0;
+        padding-left: 1.2rem;
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 14px;
+      }
+      .toc li { margin: 6px 0; }
+      .toc a { color: var(--ink); text-underline-offset: 3px; }
+      section.edit {
+        margin-top: 56px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+      }
+      .edit-num {
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .edit h2 {
+        margin: 0 0 10px;
+        font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+        font-weight: 500;
+      }
+      .edit .summary {
+        max-width: 62ch;
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 15px;
+      }
+      .pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (max-width: 800px) {
+        .pair { grid-template-columns: 1fr; }
+      }
+      figure {
+        margin: 0;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      figure.full { margin-top: 14px; }
+      figcaption {
+        padding: 10px 14px;
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border-bottom: 1px solid var(--line);
+        background: #faf7f0;
+      }
+      figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        vertical-align: middle;
+      }
+      .note {
+        margin-top: 12px;
+        font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        background: #ebe6da;
+        padding: 1px 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Before &amp; after edits</h1>
+        <p>
+          Side-by-side screenshots from the frozen
+          <code>original/</code> baseline → the edited
+          <code>exact/</code> site.
+        </p>
+        <div class="meta">
+          <span><strong>Before</strong> http://localhost:5175</span>
+          <span><strong>After</strong> http://localhost:5173</span>
+          <span><strong>Shots</strong> comparisons/shots/</span>
+        </div>
+      </header>
+
+      <nav class="toc" aria-label="Edits">
+        <h2>Edits list</h2>
+        <ol>
+          <li><a href="#favicon">Favicon → yellow circle + wave mark (text removed)</a></li>
+          <li><a href="#chat-avatar">Chat simulation profile pictures → Inyo logo avatar</a></li>
+          <li><a href="#logo-fade">Fixed logo fades when it covers page content</a></li>
+          <li><a href="#legal-title">Legal page document titles fixed (<code>{{Title}}</code>)</a></li>
+          <li><a href="#hero">Full hero viewport (context)</a></li>
+        </ol>
+      </nav>
+
+      <section class="edit" id="favicon">
+        <div class="edit-num">Edit 01</div>
+        <h2>Favicon rebuilt from brand mark</h2>
+        <p class="summary">
+          Original tab icon was the black wave + “inyo” wordmark. Changed to the
+          wave mark alone on Inyo’s yellow circle (<code>#f5ff66</code>). Chat
+          avatar uses a higher-fidelity composite from the real header logo.
+        </p>
+        <figure class="full">
+          <figcaption>Asset comparison — before favicon · after favicon · after chat avatar</figcaption>
+          <img src="shots/compare-favicon-assets.png" alt="Favicon before and after assets" />
+        </figure>
+        <p class="note">Files: <code>exact/assets/images/favicon.svg</code>, <code>favicon-32.png</code>, <code>favicon-180.png</code>, <code>inyo-avatar.png</code></p>
+      </section>
+
+      <section class="edit" id="chat-avatar">
+        <div class="edit-num">Edit 02</div>
+        <h2>Chat simulation profile pictures</h2>
+        <p class="summary">
+          In the phone texting demos, the Inyo PFP was missing/broken. Replaced
+          with the yellow-circle logo mark (derived from the real header logo,
+          not the simplified favicon path), sized consistently across phones.
+        </p>
+        <div class="pair">
+          <figure>
+            <figcaption>Before — missing / broken PFP</figcaption>
+            <img src="shots/before-chat-header.png" alt="Before chat header without avatar" />
+          </figure>
+          <figure>
+            <figcaption>After — yellow-circle Inyo avatar</figcaption>
+            <img src="shots/after-chat-header.png" alt="After chat header with avatar" />
+          </figure>
+        </div>
+        <figure class="full">
+          <figcaption>Full chat section — before | after</figcaption>
+          <img src="shots/compare-03-chat-learns.png" alt="Chat section before and after" />
+        </figure>
+        <figure class="full">
+          <figcaption>Second phone (intro consent) — before | after</figcaption>
+          <img src="shots/compare-04-chat-intro.png" alt="Intro chat before and after" />
+        </figure>
+      </section>
+
+      <section class="edit" id="logo-fade">
+        <div class="edit-num">Edit 03</div>
+        <h2>Logo fades over content</h2>
+        <p class="summary">
+          The fixed centered logo was covering headlines while scrolling. Instead
+          of moving it top-left, it now fades to ~14% opacity when it sits over
+          page content.
+        </p>
+        <div class="pair">
+          <figure>
+            <figcaption>Before — logo opaque over text</figcaption>
+            <img src="shots/before-02b-logo-fade-logozoom.png" alt="Before opaque logo over content" />
+          </figure>
+          <figure>
+            <figcaption>After — logo faded (readable text)</figcaption>
+            <img src="shots/after-02b-logo-fade-logozoom.png" alt="After faded logo over content" />
+          </figure>
+        </div>
+        <figure class="full">
+          <figcaption>Full viewport — before | after</figcaption>
+          <img src="shots/compare-02b-logo-fade.png" alt="Logo fade full before and after" />
+        </figure>
+      </section>
+
+      <section class="edit" id="legal-title">
+        <div class="edit-num">Edit 04</div>
+        <h2>Legal page titles</h2>
+        <p class="summary">
+          Framer left an unsubstituted <code>{{Title}}</code> placeholder in the
+          document title / social meta. Fixed to “Privacy Policy — inyo” and
+          “Terms &amp; Conditions — inyo” in <code>exact/</code> and
+          <code>site/</code> (original left untouched).
+        </p>
+        <figure class="full">
+          <figcaption>Document &lt;title&gt; — before | after</figcaption>
+          <img src="shots/compare-privacy-title.png" alt="Privacy page title before and after" />
+        </figure>
+        <figure class="full">
+          <figcaption>Privacy page body (unchanged visually) — before | after</figcaption>
+          <img src="shots/compare-05-privacy.png" alt="Privacy page body before and after" />
+        </figure>
+        <p class="note">
+          Note: Framer client hydration can briefly rewrite the tab title back to
+          <code>{{Title}}</code> at runtime; the HTML source in
+          <code>exact/legal/</code> and <code>site/legal/</code> is corrected.
+        </p>
+      </section>
+
+      <section class="edit" id="hero">
+        <div class="edit-num">Context</div>
+        <h2>Hero / first viewport</h2>
+        <p class="summary">
+          First-screen layout is largely unchanged; included for orientation.
+          Visible differences here are mostly favicon/tab chrome and incidental
+          Framer hydration timing.
+        </p>
+        <figure class="full">
+          <figcaption>Hero — before | after</figcaption>
+          <img src="shots/compare-01-hero.png" alt="Hero before and after" />
+        </figure>
+      </section>
+    </div>
+  </body>
+</html>

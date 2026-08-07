@@ -1,0 +1,50 @@
+:root {
+  --bg: #f7f4ef;
+  --bg-deep: #f1efea;
+  --ink: #381c18;
+  --ink-soft: #383838;
+  --ink-brown: #211d18;
+  --muted: #8a857c;
+  --lime: #f5ff66;
+  --phone: #111;
+  --bubble-inyo: #f3f1eb;
+  --bubble-user: #e8f0ff;
+  --max: 1120px;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+#root {
+  min-height: 100vh;
+}
