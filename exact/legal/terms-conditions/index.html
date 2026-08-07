@@ -7,6 +7,44 @@
 	<meta name="viewport" content="width=device-width">
 	<meta name="generator" content="Framer 089ff9b">
 	<title>Terms & Conditions — inyo</title>
+<script id="inyo-legal-head-fix">
+(function () {
+  var TITLE = 'Terms & Conditions — inyo';
+  function siteRoot() {
+    return '/';
+  }
+  function ensureIcon(rel, type, file) {
+    var href = siteRoot() + file;
+    var sel = 'link[rel="' + rel + '"]';
+    if (type) sel += '[type="' + type + '"]';
+    var el = document.querySelector(sel);
+    if (!el) {
+      el = document.createElement('link');
+      el.setAttribute('rel', rel);
+      if (type) el.setAttribute('type', type);
+      document.head.appendChild(el);
+    }
+    if (el.getAttribute('href') !== href) el.setAttribute('href', href);
+  }
+  function fix() {
+    if (document.title !== TITLE) document.title = TITLE;
+    ensureIcon('icon', 'image/png', 'assets/images/favicon-32.png');
+    ensureIcon('icon', 'image/svg+xml', 'assets/images/favicon.svg');
+    ensureIcon('apple-touch-icon', '', 'assets/images/favicon-180.png');
+  }
+  fix();
+  try {
+    new MutationObserver(fix).observe(document.documentElement, {
+      subtree: true, childList: true, characterData: true
+    });
+  } catch (e) {}
+  var n = 0;
+  var id = setInterval(function () {
+    fix();
+    if (++n > 50) clearInterval(id);
+  }, 100);
+})();
+</script>
     <meta name="description" content="Legal information for inyo, operated by JOININYO LTD.">
     <meta name="framer-search-index" content="https://framerusercontent.com/sites/4D4TODtVzEOuLWVEVJJEhG/searchIndex-RXIHkD6zkmSa.json">
     <meta name="framer-search-index-fallback" content="https://framerusercontent.com/sites/4D4TODtVzEOuLWVEVJJEhG/searchIndex-XV4VwzcM7KoJ.json">
