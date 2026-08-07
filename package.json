@@ -10,6 +10,8 @@
     "original": "npx --yes serve original -l 5175 --no-clipboard",
     "start": "npm run exact",
     "compare": "npx --yes serve comparisons -l 5176 --no-clipboard",
-    "capture-compare": "node comparisons/capture.mjs"
+    "capture-compare": "node comparisons/capture_all.mjs",
+    "doc": "python3 comparisons/build_google_doc.py",
+    "pdf": "python3 comparisons/compose_pdf_canvas.py"
   }
 }
