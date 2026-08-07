@@ -309,7 +309,7 @@ export default function App() {
         <div className="section-inner footer">
           <div>
             <a href="/legal/terms-conditions">Terms &amp; Conditions</a>
-            <a href="/legal/privacy-policy">Privacy</a>
+            <a href="/legal/privacy-policy">Privacy Policy</a>
           </div>
           <div>© 2026 Inyo</div>
         </div>
